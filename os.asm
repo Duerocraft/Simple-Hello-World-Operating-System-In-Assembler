@@ -4,7 +4,7 @@ org 0x7c00
 jmp main
 
 Message db "Hello World", 0x0
-AnyKey db "Press any key to reboot", 0x0
+AnyKey db "Press any key to Shutdown", 0x0
 
 Println:
 	lodsb
@@ -26,16 +26,24 @@ PrintNwl:
 	int 0x10
 		ret
 
+Shutdown:
+    mov ax, 0x1000
+    mov ax, ss
+    mov sp, 0xf000
+    mov ax, 0x5307
+    mov bx, 0x0001
+    mov cx, 0x0003
+    int 0x15
+	ret
+	
 Boot:
     mov si, Message
     call Println
 	mov si, AnyKey
-    call Println
+	call Println
 	call GetPressedKey
-
-	db 0x0ea
-	dw 0x0000
-	dw 0xffff
+	
+	call Shutdown
 
 GetPressedKey:
 	mov ah, 0
